@@ -38,11 +38,10 @@
 <a href='./logout'>로그아웃</a>
 </c:if>
 
-<c:if test="${ empty login}">
-아무개님 반갑습니다. 
+<c:if test="${empty login}">
 <a href='./guestlist'>게시판 보기</a>
 <a href='./guestwrite'>게시판 글쓰기</a>
-<a href='./logout'>로그아웃</a>
+<a href='./'>로그인</a>
 </c:if>
 <h1>
 	안녕하세요 인재 게시판입니다.

@@ -40,10 +40,12 @@ public class MemberController {
 		logger.info("Welcome registerMember2.");
 		return "regist";
 	}
+	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String login(HttpSession session,MemberDto memberDto ,Model model) throws Exception {
 		logger.info("Welcome login.");
 		MemberDto login=mservice.login(memberDto);
+		
 		if(login!=null) {
 			session.setAttribute("login", login);
 		}else {

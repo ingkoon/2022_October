@@ -34,6 +34,7 @@ public class MemberServiceImpl implements MemberService {
 	@Transactional(readOnly = true)
 	public MemberDto login(MemberDto memberDto) throws Exception {
 		MemberMapper memberMapper = sqlSession.getMapper(MemberMapper.class);
+
 		return memberMapper.login(memberDto);
 	}
 }
