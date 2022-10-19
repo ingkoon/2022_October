@@ -49,7 +49,7 @@
   </tr>
   
   <tr>
-    <th>패서워드</th>
+    <th>패스워드</th>
     <td><input type="password" name="userPwd"> </td>
   </tr>
   
@@ -57,8 +57,6 @@
     <th>이메일</th>
     <td><input type="text" name="email"> </td>
   </tr>
-  
-
   <tr>
     <td colspan="2"><input type="submit" value="회원가입"> </td>
   </tr>
@@ -66,6 +64,6 @@
 </form>
 
 <a href='./'>HOME</a>
-<a href='./regist'>회원가입</a>
+<a href='./registerMember'>회원가입</a>
 </body>
 </html> 

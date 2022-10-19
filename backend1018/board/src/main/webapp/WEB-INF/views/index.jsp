@@ -54,6 +54,6 @@
 </form>
 
 <a href='./'>HOME</a>
-<a href='./registerMember'>회원가입</a>
+<a href='${root}/registerMember'>회원가입</a>
 </body>
 </html> 

@@ -29,6 +29,7 @@
 </style>
 </head>
 <body>
+<% String userName = (String)session.getAttribute("userId"); %>
 <h1>
 	안녕하세요 인재 게시판입니다.
 </h1>
@@ -37,7 +38,7 @@
 <table id="customers">
   <tr>
     <th>작성자</th>
-    <td><input type="text" name="userId"> </td>
+    <td><input type="text" name="userId" value = "${uesrName}"> </td>
   </tr>
   
   <tr>
