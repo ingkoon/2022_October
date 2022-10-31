@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ssafy</groupId>
-	<artifactId>board6_springboot</artifactId>
+	<artifactId>board</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>board6_springboot</name>
 	<description>board project for Spring Boot</description>

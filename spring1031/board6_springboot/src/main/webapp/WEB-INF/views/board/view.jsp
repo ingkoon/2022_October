@@ -34,11 +34,11 @@
             <div class="text-secondary">
               ${article.content}
             </div>
-            <c:if test="${!empty article.fileInfos}">            
+            <c:if test="${!empty article.fileInfos}">
 						<div class="mt-3">
 							<ul>
 								<c:forEach var="file" items="${article.fileInfos}">
-									<img src="/upload/file/${file.saveFolder/${file.saveFile}">
+									<img src="${root}/upload/file/${file.saveFolder}/${file.saveFile}" width="200px">
 									<li>${file.originalFile} <a href="#" class="filedown" sfolder="${file.saveFolder}" sfile="${file.saveFile}" ofile="${file.originalFile}">[다운로드]</a>
 								</c:forEach>
 							</ul>

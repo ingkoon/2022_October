@@ -19,9 +19,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SwaggerConfiguration {
 
 //	Swagger-UI 2.x 확인
-//	http://localhost:8080/{your-app-root}/swagger-ui.html
+//	http://localhost[:8080]/{your-app-root}/swagger-ui.html
 //	Swagger-UI 3.x 확인
-//	http://localhost:8080/{your-app-root}/swagger-ui/index.html
+//	http://localhost[:8080]/{your-app-root}/swagger-ui/index.html
 
 	private String version = "V1";
 	private String title = "SSAFY Board API " + version;
@@ -30,7 +30,7 @@ public class SwaggerConfiguration {
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2).consumes(getConsumeContentTypes()).produces(getProduceContentTypes())
 					.apiInfo(apiInfo()).groupName(version).select()
-					.apis(RequestHandlerSelectors.basePackage("com.ssafy.admin.controller"))
+					.apis(RequestHandlerSelectors.basePackage("com.ssafy.admin.controller")) //restcontroller의 위치를 명세하는 작업
 					.paths(regex("/admin/.*")).build()
 					.useDefaultResponseMessages(false);
 	}
@@ -51,7 +51,7 @@ public class SwaggerConfiguration {
 
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder().title(title)
-				.description("<h3>SSAFY API Reference for Developers</h3>Swagger를 이용한 Board API<br><img src=\"/board/assets/img/ssafy_logo.png\" width=\"150\">") 
+				.description("<h3>SSAFY API Reference for Developers</h3>Swagger를 이용한 Board API<br><img src=\"/assets/img/ssafy_logo.png\" width=\"150\">") 
 				.contact(new Contact("SSAFY", "https://edu.ssafy.com", "ssafy@ssafy.com"))
 				.license("SSAFY License")
 				.licenseUrl("https://www.ssafy.com/ksp/jsp/swp/etc/swpPrivacy.jsp")

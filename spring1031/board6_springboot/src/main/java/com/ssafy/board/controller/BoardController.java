@@ -1,6 +1,10 @@
 package com.ssafy.board.controller;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,15 +16,24 @@ import java.util.UUID;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.core.io.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -30,6 +43,8 @@ import com.ssafy.board.model.FileInfoDto;
 import com.ssafy.board.model.service.BoardService;
 import com.ssafy.member.model.MemberDto;
 import com.ssafy.util.PageNavigation;
+
+
 
 @Controller
 @RequestMapping("/board")
@@ -44,7 +59,7 @@ public class BoardController {
 
 	@Autowired
 	public BoardController(BoardService boardService) {
-		logger.info("boardController 생성자 호출!!!");
+		logger.info("BoardController 생성자 호출!!");
 		this.boardService = boardService;
 	}
 
@@ -58,7 +73,7 @@ public class BoardController {
 	}
 
 	@PostMapping("/write")
-	public String write(BoardDto boardDto, @RequestParam("upfile") MultipartFile[] files, HttpSession session,
+	public String write(@Value("${file.path.upload-files}") String filePath, BoardDto boardDto, @RequestParam("upfile") MultipartFile[] files, HttpSession session,
 			RedirectAttributes redirectAttributes) throws Exception {
 		logger.debug("write boardDto : {}", boardDto);
 		MemberDto memberDto = (MemberDto) session.getAttribute("userinfo");
@@ -70,7 +85,7 @@ public class BoardController {
 			String realPath = servletContext.getRealPath("/upload");
 //			String realPath = servletContext.getRealPath("/resources/img");
 			String today = new SimpleDateFormat("yyMMdd").format(new Date());
-			String saveFolder = realPath + File.separator + today;
+			String saveFolder = filePath + File.separator + today;
 			logger.debug("저장 폴더 : {}", saveFolder);
 			File folder = new File(saveFolder);
 			if (!folder.exists())
@@ -80,7 +95,7 @@ public class BoardController {
 				FileInfoDto fileInfoDto = new FileInfoDto();
 				String originalFileName = mfile.getOriginalFilename();
 				if (!originalFileName.isEmpty()) {
-					String saveFileName = UUID.randomUUID().toString()
+					String saveFileName = System.nanoTime()
 							+ originalFileName.substring(originalFileName.lastIndexOf('.'));
 					fileInfoDto.setSaveFolder(today);
 					fileInfoDto.setOriginalFile(originalFileName);
@@ -169,19 +184,22 @@ public class BoardController {
 	}
 
 	@GetMapping(value = "/download")
-	public ModelAndView downloadFile(@RequestParam("sfolder") String sfolder, @RequestParam("ofile") String ofile,
-			@RequestParam("sfile") String sfile, HttpSession session) {
-		MemberDto memberDto = (MemberDto) session.getAttribute("userinfo");
-		if (memberDto != null) {
-			Map<String, Object> fileInfo = new HashMap<String, Object>();
-			fileInfo.put("sfolder", sfolder);
-			fileInfo.put("ofile", ofile);
-			fileInfo.put("sfile", sfile);
+	@ResponseBody
+    public ResponseEntity<Object> downloadFile(@Value("${file.path.upload-files}") String filePath, @RequestParam("sfolder") String sfolder, @RequestParam("ofile") String ofile,
+            @RequestParam("sfile") String sfile, HttpSession session) throws IOException {
+        MemberDto memberDto = (MemberDto) session.getAttribute("userinfo");
+        if (memberDto != null) {
+        
+            Path path = Paths.get(filePath + sfolder + "/" + sfile);
+            Resource resource = new InputStreamResource(Files.newInputStream(path));
+            File file = new File(filePath);
 
-			return new ModelAndView("fileDownLoadView", "downloadFile", fileInfo);
-		} else {
-			return new ModelAndView("redirect:/");
-		}
-	}
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentDisposition(ContentDisposition.builder("attachment").filename(ofile).build());
+
+            return new ResponseEntity<Object>(resource, headers, HttpStatus.OK);
+        }
+        return null;
+    }
 
 }

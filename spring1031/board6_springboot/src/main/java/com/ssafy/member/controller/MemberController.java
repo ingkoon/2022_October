@@ -31,7 +31,7 @@ public class MemberController {
 	
 	@Autowired
 	public MemberController(MemberService memberService) {
-		logger.info("MemberController 생성자 호출!!!!");
+		logger.info("MemberController 생성자 호출!!");
 		this.memberService = memberService;
 	}
 
