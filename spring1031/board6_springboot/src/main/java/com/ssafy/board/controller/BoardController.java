@@ -2,6 +2,7 @@ package com.ssafy.board.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,10 +15,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.core.io.Resource;
-
+import org.apache.catalina.connector.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,7 +189,7 @@ public class BoardController {
 	@GetMapping(value = "/download")
 	@ResponseBody
     public ResponseEntity<Object> downloadFile(@Value("${file.path.upload-files}") String filePath, @RequestParam("sfolder") String sfolder, @RequestParam("ofile") String ofile,
-            @RequestParam("sfile") String sfile, HttpSession session) throws IOException {
+            @RequestParam("sfile") String sfile, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
         MemberDto memberDto = (MemberDto) session.getAttribute("userinfo");
         if (memberDto != null) {
         
@@ -195,7 +198,18 @@ public class BoardController {
             File file = new File(filePath);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentDisposition(ContentDisposition.builder("attachment").filename(ofile).build());
+            
+            String header = request.getHeader("User-Agent");
+            boolean isIE = header.indexOf("MSIE") > -1 || header.indexOf("Trident") > -1;
+            String fileName= null;
+            
+            if (isIE) {
+                fileName = URLEncoder.encode(ofile, "UTF-8").replaceAll("\\+", "%20");
+            } else {
+                fileName = new String(ofile.getBytes("UTF-8"), "ISO-8859-1");
+            }
+            
+            headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
 
             return new ResponseEntity<Object>(resource, headers, HttpStatus.OK);
         }
